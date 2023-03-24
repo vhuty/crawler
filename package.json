@@ -2,10 +2,15 @@
   "name": "crawler",
   "version": "1.0.0",
   "description": "Web crawler for parsing and indexing websites",
-  "main": "index.js",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src"
   },
   "author": "Vladyslav Hutych",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ws": "8.13.0"
+  }
 }
