@@ -1,4 +1,4 @@
-import { request } from 'undici';
+import { fetch } from 'undici';
 
 export class Downloader {
   /**
@@ -6,10 +6,10 @@ export class Downloader {
    */
   async fetchPage(url) {
     try {
-      const { body, statusCode } = await request(url);
+      const response = await fetch(url);
 
-      if (statusCode === 200) {
-        return await body.text();
+      if (response.ok) {
+        return await response.text();
       }
 
       // TODO: Handle redirects
