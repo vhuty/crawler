@@ -3,6 +3,10 @@ import { WebSocketServer } from 'ws';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
+import { Crawler } from './crawler.js';
+import { Downloader } from './downloader.js';
+import { Parser } from './parser.js';
+
 const mimeTypes = {
   html: 'text/html',
   js: 'text/javascript',
@@ -35,7 +39,21 @@ server.listen(port);
 
 const ws = new WebSocketServer({ server });
 
+const downloader = new Downloader();
+const parser = new Parser();
+
 ws.on('connection', (socket, _req) => {
-  socket.send('OK');
-  socket.close();
+  socket.on('message', async (data) => {
+    try {
+      const crawler = new Crawler(parser, downloader);
+      crawler.on('message', (message) => {
+        socket.send(message);
+      });
+
+      await crawler.crawl([new URL(data.toString())]);
+      console.log('Processed all');
+    } catch (error) {
+      console.error(error);
+    }
+  });
 });
