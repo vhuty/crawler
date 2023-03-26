@@ -39,17 +39,12 @@ server.listen(port);
 
 const ws = new WebSocketServer({ server });
 
-const downloader = new Downloader();
-const parser = new Parser();
+const parser = new Parser(new Downloader());
 
 ws.on('connection', (socket, _req) => {
   socket.on('message', async (data) => {
     try {
-      const crawler = new Crawler(parser, downloader);
-      crawler.on('message', (message) => {
-        socket.send(message);
-      });
-
+      const crawler = new Crawler(parser);
       await crawler.crawl([new URL(data.toString())]);
       console.log('Processed all');
     } catch (error) {

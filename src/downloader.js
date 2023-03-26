@@ -13,7 +13,7 @@ export class Downloader {
       }
 
       // TODO: Handle redirects
-      console.info(`Received status: ${statusCode}, skipping...`);
+      console.info(`Received status: ${response.status}, skipping...`);
     } catch (error) {
       console.info(`Failed to fetch: ${url.href}, reason: ${error.message}`);
     }
