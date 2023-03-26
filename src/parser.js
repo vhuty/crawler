@@ -1,7 +1,7 @@
 const LINK_REG_EXP = /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/g;
 
 export class Parser {
-  parseLinks(html, url) {
+  parseUrls(html, url) {
     const urls = [];
 
     if (!html.length) {
