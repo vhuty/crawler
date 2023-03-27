@@ -39,16 +39,32 @@ server.listen(port);
 
 const ws = new WebSocketServer({ server });
 
-const parser = new Parser(new Downloader());
+ws.on('connection', async (socket, req) => {
+  if (!req.url) {
+    socket.close(1011);
+    return;
+  }
 
-ws.on('connection', (socket, _req) => {
-  socket.on('message', async (data) => {
-    try {
-      const crawler = new Crawler(parser);
-      await crawler.crawl([new URL(data.toString())]);
-      console.log('Processed all');
-    } catch (error) {
-      console.error(error);
-    }
-  });
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const seedUrlQuery = url.searchParams.get('seedUrl');
+
+  if (!seedUrlQuery) {
+    socket.send('Seed URL is not specified');
+    socket.close(1008);
+    return;
+  }
+
+  let seedUrl;
+  try {
+    seedUrl = new URL(seedUrlQuery);
+  } catch {
+    socket.send('Seed URL is invalid');
+    socket.close(1008);
+    return;
+  }
+
+  const parser = new Parser(new Downloader());
+  const crawler = new Crawler(parser);
+
+  return crawler.crawl([seedUrl]);
 });
