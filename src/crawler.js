@@ -38,6 +38,12 @@ export class Crawler extends EventEmitter {
       const urlsPerPages = await Promise.all(urlsChunk.map((url) => this.parser.parsePageLinks(url)));
       const allUrls = urlsPerPages.flatMap((links) => links.slice(0, maxLinksPerPage - 1));
       childUrls.push(...allUrls.filter((link) => !this.processedUrls.includes(link)));
+
+      this.emit('progress', {
+        total: seedUrls.length,
+        processed: i + urlsChunk.length,
+        level: this.nestingLevel,
+      });
     }
 
     console.log(`Processed at the level: ${this.nestingLevel} - ${seedUrls.length}`);

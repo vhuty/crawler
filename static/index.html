@@ -4,9 +4,21 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+  <title>Crawler</title>
 </head>
 <body>
-  <h1>Server works!<h1>
+  <main class="main-container">
+    <form class="input-group mb-3" id="form-crawler">
+      <input type="url" class="form-control" id="input-url" autofocus placeholder="Paste URL to crawl here" aria-label="Paste URL to crawl here" aria-describedby="button-crawl">
+      <button class="btn btn-primary" type="submit" id="button-crawl">Crawl</button>
+    </form>
+    <div class="progress" id="progress-crawler" role="progressbar" aria-label="Animated striped example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar-crawler" style="width: 0%">0%</div>
+    </div>
+    <h6 class="h-nesting-level">Nesting level: <span class="badge rounded-pill text-bg-warning" id="span-nesting-level">0</span></h6>
+  </main>
+  <script src="./scripts.js"></script>
 </body>
 </html>

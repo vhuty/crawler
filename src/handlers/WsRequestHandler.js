@@ -29,6 +29,10 @@ export class WsRequestHandler {
   
     const parser = new Parser(new Downloader());
     const crawler = new Crawler(parser);
+
+    crawler.on('progress', (data) => {
+      socket.send(JSON.stringify(data));
+    });
   
     return crawler.crawl([seedUrl]);
   }
