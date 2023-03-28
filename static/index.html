@@ -17,11 +17,36 @@
     <div class="progress" id="progress-crawler" role="progressbar" aria-label="Animated striped example" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
       <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar-crawler" style="width: 0%">0%</div>
     </div>
-    <h6 class="h-nesting-level">Nesting level: <span class="badge rounded-pill text-bg-warning" id="span-nesting-level">0</span></h6>
+    <div class="alert alert-primary d-flex justify-content-between align-items-center div-total-crawled" role="alert">
+      Total crawled:
+      <span class="badge rounded-pill text-bg-info" id="totalParsed">0</span>
+    </div>
+    <h6 class="h-nesting-level">
+      <span class="align-bottom">Nesting level:</span>
+      <span class="badge bg-secondary" id="span-nesting-level">0</span>
+    </h6>
     <ul class="list-group list-group-horizontal list-metrics">
       <li class="list-group-item flex-fill" id="item-avg-load">Average: 0ms</li>
       <li class="list-group-item flex-fill" id="item-fastest-load">Fastest: 0ms</li>
       <li class="list-group-item flex-fill" id="item-slowest-load">Slowest: 0ms</li>
+    </ul>
+    <ul class="list-group list-statuses">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Success load (20X):
+        <span class="badge rounded-pill text-bg-success" id="successStatus">0</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Server redirects (30X):
+        <span class="badge rounded-pill text-bg-secondary" id="redirectStatus">0</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Client errors (40X):
+        <span class="badge rounded-pill text-bg-warning" id="redirectStatus">0</span>
+      </li>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Server errors (500X):
+        <span class="badge rounded-pill text-bg-danger" id="errorStatus">0</span>
+      </li>
     </ul>
   </main>
   <script src="./scripts.js"></script>
