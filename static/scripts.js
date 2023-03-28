@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const $progressCrawler = document.getElementById('progress-crawler');
   const $progressBarCrawler = document.getElementById('progress-bar-crawler');
   const $spanNestingLevel = document.getElementById('span-nesting-level');
+
+  const $itemAvgLoad = document.getElementById('item-avg-load');
+  const $itemFastestLoad = document.getElementById('item-fastest-load');
+  const $itemSlowestLoad = document.getElementById('item-slowest-load');
   
   $formCrawler.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -14,14 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ws = new WebSocket(url.href);
     ws.onmessage = (message) => {
-      const { processed, level, total } = JSON.parse(message.data);
+      const { processed, level, total, metrics } = JSON.parse(message.data);
 
       updateProgressBar(processed, total);
+      updateMetrics(metrics);
       $spanNestingLevel.textContent = level;
     };
 
     ws.onclose = stopProgressBar;
   });
+
+  function updateMetrics(metrics) {
+    const { fastest, slowest, avg } = metrics;
+
+    $itemAvgLoad.textContent = `Average: ${avg}ms`;
+    $itemFastestLoad.textContent = `Fastest: ${fastest}ms`;
+    $itemSlowestLoad.textContent = `Slowest: ${slowest}ms`;
+  }
 
   function updateProgressBar(currentValue, maxValue) {
     $progressCrawler.setAttribute('aria-valuemax', maxValue);

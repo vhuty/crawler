@@ -27,8 +27,9 @@ export class WsRequestHandler {
       return;
     }
   
-    const parser = new Parser(new Downloader());
-    const crawler = new Crawler(parser);
+    const downloader = new Downloader();
+    const parser = new Parser(downloader);
+    const crawler = new Crawler(downloader, parser);
 
     crawler.on('progress', (data) => {
       socket.send(JSON.stringify(data));

@@ -3,11 +3,13 @@ import { EventEmitter } from 'node:events';
 export class Crawler extends EventEmitter {
   /**
    * @param {import('./parser').Parser} parser
+   * @param {import('./downloader').Downloader} downloader
    */
-  constructor(parser) {
+  constructor(downloader, parser) {
     super();
 
     this.parser = parser;
+    this.downloader = downloader;
 
     this.nestingLevel = 1;
     this.processedUrls = [];
@@ -43,6 +45,11 @@ export class Crawler extends EventEmitter {
         total: seedUrls.length,
         processed: i + urlsChunk.length,
         level: this.nestingLevel,
+        metrics: {
+          fastest: this.downloader.fastestLoad,
+          slowest: this.downloader.slowestLoad,
+          avg: this.downloader.avgLoad,
+        },
       });
     }
 
