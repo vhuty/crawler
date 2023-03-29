@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const $formCrawler = document.getElementById('form-crawler');
+
+  const $buttonCrawl = document.getElementById('button-crawl');
   const $inputUrl = document.getElementById('input-url');
   const $progressCrawler = document.getElementById('progress-crawler');
   const $progressBarCrawler = document.getElementById('progress-bar-crawler');
@@ -14,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   $formCrawler.addEventListener('submit', (event) => {
     event.preventDefault();
+    $buttonCrawl.setAttribute('disabled', '');
+    $inputUrl.setAttribute('disabled', '');
 
     const url = new URL(window.location.href);
     url.protocol = 'ws';
