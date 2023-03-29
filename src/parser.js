@@ -1,17 +1,10 @@
 const LINK_REG_EXP = /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/g;
 
 export class Parser {
-  constructor(downloader) {
-    this.downloader = downloader;
-  }
-
   /**
-   * @param {URL} url
-   * @returns {Promise<URL[]>}
+   * @returns {URL[]}
    */
-  async parsePageLinks(url) {
-    const html = await this.downloader.fetchPage(url);
-
+  parseLinks(html, url) {
     const urls = [];
 
     if (!html.length) {
@@ -27,5 +20,5 @@ export class Parser {
     }
 
     return urls;
-  };
+  }
 }

@@ -5,6 +5,8 @@ export class Downloader {
     this.fastestLoad = Infinity;
     this.slowestLoad = 0;
     this.avgLoad = 0;
+
+    this.chunkSize = 5;
   }
 
   /**
@@ -21,7 +23,10 @@ export class Downloader {
       this.avgLoad = (this.fastestLoad + this.slowestLoad) / 2;
 
       if (response.ok) {
-        return await response.text();
+        return {
+          content: await response.text(),
+          url,
+        }
       }
 
       // TODO: Handle redirects
@@ -30,6 +35,17 @@ export class Downloader {
       console.info(`Failed to fetch: ${url.href}, reason: ${error.message}`);
     }
 
-    return "";
+    return { content: "", url };
+  }
+
+  /**
+   * @param {URL[]} urls
+   */
+  async *batchFetchPages(urls) {
+    for (let i = 0; i < urls.length; i += this.chunkSize) {
+      const chunk = urls.slice(i, i + this.chunkSize);
+      const pages = await Promise.all(chunk.map(this.fetchPage, this));
+      for (const page of pages) yield page;
+    }
   }
 }

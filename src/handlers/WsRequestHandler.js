@@ -3,6 +3,10 @@ import { Downloader } from '../downloader.js';
 import { Parser } from '../parser.js';
 
 export class WsRequestHandler {
+  /**
+   * @param {import('ws').WebSocket} socket
+   * @param {import('http').IncomingMessage} req
+   */
   async handleConnection(socket, req) {
     if (!req.url) {
       socket.close(1011);
@@ -14,7 +18,7 @@ export class WsRequestHandler {
   
     if (!seedUrlQuery) {
       socket.send('Seed URL is not specified');
-      socket.close(1008);
+      socket.close(1003);
       return;
     }
   
@@ -23,18 +27,19 @@ export class WsRequestHandler {
       seedUrl = new URL(seedUrlQuery);
     } catch {
       socket.send('Seed URL is invalid');
-      socket.close(1008);
+      socket.close(1003);
       return;
     }
   
     const downloader = new Downloader();
-    const parser = new Parser(downloader);
+    const parser = new Parser();
     const crawler = new Crawler(downloader, parser);
 
     crawler.on('progress', (data) => {
       socket.send(JSON.stringify(data));
     });
   
-    return crawler.crawl([seedUrl]);
+    const result = await crawler.crawl([seedUrl]);
+    socket.close(1000, result);
   }
 }

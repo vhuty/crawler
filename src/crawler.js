@@ -17,34 +17,39 @@ export class Crawler extends EventEmitter {
 
   /**
    * @param {URL[]} seedUrls
+   * @returns {Promise<string>}
    */
   async crawl(seedUrls, options = {}) {
     if (!seedUrls.length) {
       console.info('All available URLs processed, terminating...');
 
-      return;
+      return 'All available URLs processed, terminating...';
     };
 
-    const { maxNestingLevel = 5, maxLinksPerPage = 50, chunkSize = 5 } = options;
+    const { maxNestingLevel = 5, maxLinksPerPage = 50 } = options;
 
     if (this.nestingLevel > maxNestingLevel) {
       console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
 
-      return;
+      return `Max nesting level (${maxNestingLevel}) reached, terminating...`;
     }
 
     const childUrls = [];
-
-    for (let i = 0; i < seedUrls.length; i += chunkSize) {
-      const urlsChunk = seedUrls.slice(i, i + chunkSize);
-      const urlsPerPages = await Promise.all(urlsChunk.map((url) => this.parser.parsePageLinks(url)));
-      const allUrls = urlsPerPages.flatMap((links) => links.slice(0, maxLinksPerPage - 1));
-      childUrls.push(...allUrls.filter((link) => !this.processedUrls.includes(link)));
+    let levelProcessed = 0;
+    
+    for await (const { content, url } of this.downloader.batchFetchPages(seedUrls)) {
+      this.processedUrls.push(url.href);
+      levelProcessed += 1;
+      
+      const links = this.parser.parseLinks(content, url).slice(0, maxLinksPerPage - 1);
+      childUrls.push(...links.filter((link) => !this.processedUrls.includes(link.href)));
 
       this.emit('progress', {
-        total: seedUrls.length,
-        processed: i + urlsChunk.length,
-        level: this.nestingLevel,
+        levelProcessed,
+        levelTotal: seedUrls.length,
+        currentLevel: this.nestingLevel,
+        totalProcessed: this.processedUrls.length,
+        currentUrl: url.href,
         metrics: {
           fastest: this.downloader.fastestLoad,
           slowest: this.downloader.slowestLoad,
