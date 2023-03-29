@@ -14,6 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const $currentUrl = document.getElementById('div-current-url');
   const $spanTotalCrawled = document.getElementById('span-total-crawled');
 
+  const $spanStatusSuccess = document.getElementById('span-status-success');
+  const $spanStatusRedirect = document.getElementById('span-status-redirect');
+  const $spanStatusClientError = document.getElementById('span-status-client-error');
+  const $spanStatusServerError = document.getElementById('span-status-server-error');
+
   $formCrawler.addEventListener('submit', (event) => {
     event.preventDefault();
     $buttonCrawl.setAttribute('disabled', '');
@@ -32,10 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
         totalProcessed,
         currentUrl,
         metrics,
+        statuses,
       } = JSON.parse(message.data);
 
       updateProgressBar(levelProcessed, levelTotal);
       updateMetrics(metrics);
+      updateStatuses(statuses);
+
       $currentUrl.textContent = currentUrl;
       $spanTotalCrawled.textContent = totalProcessed;
       $spanNestingLevel.textContent = currentLevel;
@@ -50,6 +58,20 @@ document.addEventListener('DOMContentLoaded', () => {
     $itemAvgLoad.textContent = `Average: ${avg}ms`;
     $itemFastestLoad.textContent = `Fastest: ${fastest}ms`;
     $itemSlowestLoad.textContent = `Slowest: ${slowest}ms`;
+  }
+
+  function updateStatuses(statuses) {
+    const {
+      success,
+      redirects,
+      clientErrors,
+      serverErrors,
+    } = statuses;
+
+    $spanStatusSuccess.textContent = success;
+    $spanStatusRedirect.textContent = redirects;
+    $spanStatusClientError.textContent = clientErrors;
+    $spanStatusServerError.textContent = serverErrors;
   }
 
   function updateProgressBar(currentValue, maxValue) {

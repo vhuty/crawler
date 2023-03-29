@@ -55,6 +55,12 @@ export class Crawler extends EventEmitter {
           slowest: this.downloader.slowestLoad,
           avg: this.downloader.avgLoad,
         },
+        statuses: {
+          success: this.downloader.successfulResponses,
+          redirects: this.downloader.redirectionResponses,
+          clientErrors: this.downloader.clientErrors,
+          serverErrors: this.downloader.serverErrors,
+        }
       });
     }
 
