@@ -26,7 +26,7 @@ export class Crawler extends EventEmitter {
       return 'All available URLs processed, terminating...';
     };
 
-    const { maxNestingLevel = 5, maxLinksPerPage = 50 } = options;
+    const { maxNestingLevel = 3, maxLinksPerPage = 20 } = options;
 
     if (this.nestingLevel > maxNestingLevel) {
       console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
