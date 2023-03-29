@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $spanNestingLevel.textContent = currentLevel;
     };
 
-    ws.onclose = stopProgressBar;
+    ws.onclose = (event) => stopProgressBar(event.wasClean);
   });
 
   function updateMetrics(metrics) {
@@ -57,8 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
     $progressBarCrawler.textContent = `${progressPercent}%`;
   }
 
-  function stopProgressBar() {
-    $progressBarCrawler.classList.remove('progress-bar-animated');
-    $progressBarCrawler.classList.add('text-bg-secondary');
+  function stopProgressBar(finished) {
+    if (finished) $progressBarCrawler.classList.remove('progress-bar-animated');
+    else $progressBarCrawler.classList.add('text-bg-secondary');
   }
 });
