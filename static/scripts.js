@@ -19,16 +19,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const $spanStatusClientError = document.getElementById('span-status-client-error');
   const $spanStatusServerError = document.getElementById('span-status-server-error');
 
+  let isCrawling = false;
+  let ws;
+
   $formCrawler.addEventListener('submit', (event) => {
     event.preventDefault();
-    $buttonCrawl.setAttribute('disabled', '');
+
+    if (isCrawling) {
+      $buttonCrawl.textContent = 'Start';
+      $buttonCrawl.classList.replace('btn-outline-danger', 'btn-primary');
+      $inputUrl.removeAttribute('disabled');
+
+      ws.close();
+      isCrawling = false;
+
+      return;
+    }
+
+    isCrawling = true;
+
+    $buttonCrawl.textContent = 'Stop';
+    $buttonCrawl.classList.replace('btn-primary', 'btn-outline-danger');
     $inputUrl.setAttribute('disabled', '');
 
     const url = new URL(window.location.href);
     url.protocol = 'ws';
     url.searchParams.append('seedUrl', $inputUrl.value);
 
-    const ws = new WebSocket(url.href);
+    ws = new WebSocket(url.href);
     ws.onmessage = (message) => {
       const {
         levelProcessed,
@@ -49,7 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
       $spanNestingLevel.textContent = currentLevel;
     };
 
-    ws.onclose = (event) => stopProgressBar(event.wasClean);
+    ws.onclose = (event) => {
+      $buttonCrawl.textContent = 'Start';
+      $buttonCrawl.classList.replace('btn-outline-danger', 'btn-primary');
+      $inputUrl.removeAttribute('disabled');
+
+      stopProgressBar(event.wasClean);
+    }
   });
 
   function updateMetrics(metrics) {

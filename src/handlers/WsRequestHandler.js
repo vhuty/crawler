@@ -1,6 +1,4 @@
-import { Crawler } from '../crawler.js';
-import { Downloader } from '../downloader.js';
-import { Parser } from '../parser.js';
+import { Worker } from "node:worker_threads";
 
 export class WsRequestHandler {
   /**
@@ -30,16 +28,31 @@ export class WsRequestHandler {
       socket.close(1003);
       return;
     }
-  
-    const downloader = new Downloader();
-    const parser = new Parser();
-    const crawler = new Crawler(downloader, parser);
 
-    crawler.on('progress', (data) => {
+    const worker = new Worker('./src/crawler/index.js', {
+      workerData: { seedUrl: seedUrl.href },
+    });
+
+    worker.on('message', (message) => {
+      const { data, result } = message;
+
+      if (result) {
+        return socket.close(1000, result);
+      }
+
       socket.send(JSON.stringify(data));
     });
-  
-    const result = await crawler.crawl([seedUrl]);
-    socket.close(1000, result);
+
+    worker.on('error', (err) => {
+      console.error(err);
+
+      socket.close(1011);
+    });
+
+    socket.on('close', () => {
+      console.log('Terminated by client');
+
+      worker.terminate();
+    });
   }
 }
