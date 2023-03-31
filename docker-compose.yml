@@ -1,8 +1,19 @@
 version: '3.9'
 services:
-  app:
+  crawler:
     build: .
     container_name: crawler_server
     ports:
       - 80:80
+    depends_on:
+      - redis
     restart: unless-stopped
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+volumes:
+  redis_data:
