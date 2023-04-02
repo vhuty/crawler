@@ -52,6 +52,22 @@ export class Downloader {
     }
   }
 
+  getMetrics() {
+    return {
+      speed: {
+        fastest: this.fastestLoad,
+        slowest: this.slowestLoad,
+        avg: this.avgLoad,
+      },
+      statuses: {
+        success: this.successfulResponses,
+        redirects: this.redirectionResponses,
+        clientErrors: this.clientErrors,
+        serverErrors: this.serverErrors,
+      }
+    };
+  }
+
   _updateMetrics(duration, status) {
     this.fastestLoad = duration < this.fastestLoad ? duration : this.fastestLoad;
     this.slowestLoad = duration > this.slowestLoad ? duration : this.slowestLoad;

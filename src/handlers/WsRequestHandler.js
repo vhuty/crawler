@@ -49,10 +49,14 @@ export class WsRequestHandler {
       socket.close(1011);
     });
 
-    socket.on('close', () => {
-      console.log('Terminated by client');
+    worker.on('exit', (code) => {
+      console.log('Worker exited with code:', code);
+    });
 
-      worker.terminate();
+    socket.on('close', () => {
+      console.log('Socket closed by client');
+
+      worker.postMessage('exit');
     });
   }
 }

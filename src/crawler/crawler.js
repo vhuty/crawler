@@ -1,5 +1,10 @@
 import { EventEmitter } from 'node:events';
 
+const CRAWL_FINISH_REASON = {
+  ALL_AVAIL_PROCESSED: 'ALL_AVAIL_PROCESSED',
+  MAX_LEVEL_REACHED: 'MAX_LEVEL_REACHED',
+};
+
 export class Crawler extends EventEmitter {
   /**
    * @param {import('./parser').Parser} parser
@@ -17,13 +22,17 @@ export class Crawler extends EventEmitter {
 
   /**
    * @param {URL[]} seedUrls
-   * @returns {Promise<string>}
    */
   async crawl(seedUrls, options = {}) {
     if (!seedUrls.length) {
       console.info('All available URLs processed, terminating...');
 
-      return 'All available URLs processed, terminating...';
+      return {
+        finishReason: CRAWL_FINISH_REASON.ALL_AVAIL_PROCESSED,
+        nestingLevel: this.getNestingLevel(),
+        totalProcessed: this.getTotalProcessed(),
+        metrics: this.downloader.getMetrics(),
+      };
     };
 
     const { maxNestingLevel = 3, maxLinksPerPage = 20 } = options;
@@ -31,7 +40,12 @@ export class Crawler extends EventEmitter {
     if (this.nestingLevel > maxNestingLevel) {
       console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
 
-      return `Max nesting level (${maxNestingLevel}) reached, terminating...`;
+      return {
+        finishReason: CRAWL_FINISH_REASON.MAX_LEVEL_REACHED,
+        nestingLevel: this.getNestingLevel(),
+        totalProcessed: this.getTotalProcessed(),
+        metrics: this.downloader.getMetrics(),
+      };
     }
 
     const childUrls = [];
@@ -45,28 +59,26 @@ export class Crawler extends EventEmitter {
       childUrls.push(...links.filter((link) => !this.processedUrls.includes(link.href)));
 
       this.emit('progress', {
+        currentUrl: url.href,
         levelProcessed,
         levelTotal: seedUrls.length,
-        currentLevel: this.nestingLevel,
-        totalProcessed: this.processedUrls.length,
-        currentUrl: url.href,
-        metrics: {
-          fastest: this.downloader.fastestLoad,
-          slowest: this.downloader.slowestLoad,
-          avg: this.downloader.avgLoad,
-        },
-        statuses: {
-          success: this.downloader.successfulResponses,
-          redirects: this.downloader.redirectionResponses,
-          clientErrors: this.downloader.clientErrors,
-          serverErrors: this.downloader.serverErrors,
-        }
+        nestingLevel: this.getNestingLevel(),
+        totalProcessed: this.getTotalProcessed(),
+        metrics: this.downloader.getMetrics(),
       });
     }
 
-    console.log(`Processed at the level: ${this.nestingLevel} - ${seedUrls.length}`);
+    console.log(`Processed at level ${this.nestingLevel}:`, seedUrls.length);
     this.nestingLevel += 1;
 
     return this.crawl(childUrls);
+  }
+
+  getTotalProcessed() {
+    return this.processedUrls.length;
+  }
+
+  getNestingLevel() {
+    return this.nestingLevel;
   }
 }

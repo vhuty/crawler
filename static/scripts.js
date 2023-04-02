@@ -16,8 +16,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const $spanStatusSuccess = document.getElementById('span-status-success');
   const $spanStatusRedirect = document.getElementById('span-status-redirect');
-  const $spanStatusClientError = document.getElementById('span-status-client-error');
-  const $spanStatusServerError = document.getElementById('span-status-server-error');
+  const $spanStatusClientError = document.getElementById(
+    'span-status-client-error'
+  );
+  const $spanStatusServerError = document.getElementById(
+    'span-status-server-error'
+  );
 
   let isCrawling = false;
   let ws;
@@ -49,22 +53,20 @@ document.addEventListener('DOMContentLoaded', () => {
     ws = new WebSocket(url.href);
     ws.onmessage = (message) => {
       const {
+        currentUrl,
         levelProcessed,
         levelTotal,
-        currentLevel,
+        nestingLevel,
         totalProcessed,
-        currentUrl,
         metrics,
-        statuses,
       } = JSON.parse(message.data);
 
       updateProgressBar(levelProcessed, levelTotal);
       updateMetrics(metrics);
-      updateStatuses(statuses);
 
       $currentUrl.textContent = currentUrl;
       $spanTotalCrawled.textContent = totalProcessed;
-      $spanNestingLevel.textContent = currentLevel;
+      $spanNestingLevel.textContent = nestingLevel;
     };
 
     ws.onclose = (event) => {
@@ -73,24 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
       $inputUrl.removeAttribute('disabled');
 
       stopProgressBar(event.wasClean);
-    }
+    };
   });
 
   function updateMetrics(metrics) {
-    const { fastest, slowest, avg } = metrics;
+    const {
+      statuses: { success, redirects, clientErrors, serverErrors },
+      speed: { fastest, slowest, avg },
+    } = metrics;
 
     $itemAvgLoad.textContent = `Average: ${avg}ms`;
     $itemFastestLoad.textContent = `Fastest: ${fastest}ms`;
     $itemSlowestLoad.textContent = `Slowest: ${slowest}ms`;
-  }
-
-  function updateStatuses(statuses) {
-    const {
-      success,
-      redirects,
-      clientErrors,
-      serverErrors,
-    } = statuses;
 
     $spanStatusSuccess.textContent = success;
     $spanStatusRedirect.textContent = redirects;
