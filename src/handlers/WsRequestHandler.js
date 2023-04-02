@@ -37,7 +37,7 @@ export class WsRequestHandler {
       const { data, result } = message;
 
       if (result) {
-        return socket.close(1000, result);
+        return socket.close(1000, result.finishReason);
       }
 
       socket.send(JSON.stringify(data));

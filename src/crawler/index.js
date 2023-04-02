@@ -34,4 +34,5 @@ import { CrawlerStorage } from './storage.js';
 
   const result = await crawler.crawl([url]);
   await storage.saveResult(url, result);
+  parentPort?.postMessage({ result });
 })();
