@@ -28,6 +28,7 @@ export class Crawler extends EventEmitter {
       console.info('All available URLs processed, terminating...');
 
       return {
+        seedUrls,
         finishReason: CRAWL_FINISH_REASON.ALL_AVAIL_PROCESSED,
         nestingLevel: this.getNestingLevel(),
         totalProcessed: this.getTotalProcessed(),
@@ -41,6 +42,7 @@ export class Crawler extends EventEmitter {
       console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
 
       return {
+        seedUrls,
         finishReason: CRAWL_FINISH_REASON.MAX_LEVEL_REACHED,
         nestingLevel: this.getNestingLevel(),
         totalProcessed: this.getTotalProcessed(),
