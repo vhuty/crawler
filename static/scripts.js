@@ -46,11 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
     $buttonCrawl.classList.replace('btn-primary', 'btn-outline-danger');
     $inputUrl.setAttribute('disabled', '');
 
-    const url = new URL(window.location.href);
+    const url = new URL('/crawler', window.location.href);
     url.protocol = 'ws';
     url.searchParams.append('seedUrl', $inputUrl.value);
 
-    ws = new WebSocket(url.href);
+    ws = new WebSocket(url);
     ws.onmessage = (message) => {
       const {
         currentUrl,
