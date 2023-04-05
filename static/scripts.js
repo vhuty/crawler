@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const progressPercent = Math.trunc((currentValue * 100) / maxValue);
     $progressBarCrawler.setAttribute('style', `width: ${progressPercent}%`);
-    $progressBarCrawler.textContent = `${progressPercent}%`;
+    $progressBarCrawler.textContent = `${progressPercent}% (${currentValue} of ${maxValue})`;
   }
 
   function stopProgressBar(finished) {
