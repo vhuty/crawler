@@ -51,7 +51,9 @@ export class Crawler extends EventEmitter {
     const childUrls = [];
     let levelProcessed = 0;
     
-    for await (const { content, url } of this.downloader.batchFetchPages(seedUrls)) {
+    for await (const page of this.downloader.batchDownloadPages(seedUrls)) {
+      const { content, url } = page;
+
       this.processedUrls.push(url.href);
       levelProcessed += 1;
       

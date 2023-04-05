@@ -6,9 +6,9 @@ import { Parser } from '../crawler/parser.js';
 import { CrawlerStorage } from './storage.js';
 
 (async () => {
-  const downloader = new Downloader();
-  const parser = new Parser();
   const storage = new CrawlerStorage();
+  const downloader = new Downloader(storage);
+  const parser = new Parser();
   const crawler = new Crawler(downloader, parser);
 
   const seedUrl = new URL(workerData.seedUrl);

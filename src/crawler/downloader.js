@@ -1,7 +1,12 @@
 import { fetch } from 'undici';
 
 export class Downloader {
-  constructor() {
+  /**
+   * @param {import('./storage').CrawlerStorage} storage
+   */
+  constructor(storage) {
+    this.storage = storage;
+
     this.fastestLoad = Infinity;
     this.slowestLoad = 0;
     this.avgLoad = 0;
@@ -17,19 +22,18 @@ export class Downloader {
   /**
    * @param {URL} url
    */
-  async fetchPage(url) {
+  async downloadPage(url) {
     try {
       const start = Date.now();
       const response = await fetch(url);
       const duration = Date.now() - start;
-
       this._updateMetrics(duration, response.status);
 
+      const content = await response.text();
+      await this.storage.savePage(url, content);
+
       if (response.ok) {
-        return {
-          content: await response.text(),
-          url,
-        }
+        return { content, url };
       }
 
       // TODO: Handle redirects
@@ -44,10 +48,10 @@ export class Downloader {
   /**
    * @param {URL[]} urls
    */
-  async *batchFetchPages(urls) {
+  async *batchDownloadPages(urls) {
     for (let i = 0; i < urls.length; i += this.chunkSize) {
       const chunk = urls.slice(i, i + this.chunkSize);
-      const pages = await Promise.all(chunk.map(this.fetchPage, this));
+      const pages = await Promise.all(chunk.map(this.downloadPage, this));
       for (const page of pages) yield page;
     }
   }
