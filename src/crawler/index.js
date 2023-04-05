@@ -12,7 +12,8 @@ import { CrawlerStorage } from './storage.js';
   const crawler = new Crawler(downloader, parser);
 
   const seedUrl = new URL(workerData.seedUrl);
-  const seedUrls = [seedUrl];
+
+  await storage.createIndex(seedUrl);
 
   crawler.on('progress', (data) => {
     parentPort?.postMessage({ data });
@@ -21,22 +22,19 @@ import { CrawlerStorage } from './storage.js';
   parentPort?.on('message', async (event) => {
     if (event === 'exit') {
       const result = {
-        seedUrls,
         finishReason: 'MANUAL',
         nestingLevel: crawler.getNestingLevel(),
         totalProcessed: crawler.getTotalProcessed(),
         metrics: downloader.getMetrics(),
       };
 
-      await storage.saveResult(result);
+      await storage.saveResult(seedUrl, result);
 
       process.exit();
     }
   });
 
-  await storage.createIndex(seedUrl);
-
-  const result = await crawler.crawl(seedUrls);
-  await storage.saveResult(result);
+  const result = await crawler.crawl([seedUrl]);
+  await storage.saveResult(seedUrl, result);
   parentPort?.postMessage({ result });
 })();

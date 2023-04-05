@@ -6,20 +6,22 @@ export class CrawlerStorage {
     this.root = process.cwd();
   }
 
-  async createIndex(url) {
-    const dirname = `${url.host}-${Date.now()}`;
-    this.dirPath = await mkdir(join(this.root, 'index', dirname));
+  async createIndex(seedUrl) {
+    const dirname = `${seedUrl.host}-${Date.now()}`;
+    this.dirPath = join(this.root, 'index', dirname);
+
+    await mkdir(this.dirPath);
     console.log('Created index at:', this.dirPath);
   }
 
-  async saveResult(result) {
+  async saveResult(seedUrl, result) {
     if (!this.dirPath) {
       throw new Error('Index is not created');
     }
 
     return writeFile(
       join(this.dirPath, 'result.json'),
-      JSON.stringify(result)
+      JSON.stringify({ seedUrl, ...result })
     );
   }
 }
