@@ -12,7 +12,10 @@ export class WsRequestHandler {
     }
   
     const url = new URL(req.url, `http://${req.headers.host}`);
+
     const seedUrlQuery = url.searchParams.get('seedUrl');
+    const maxNestingLevel = url.searchParams.get('maxNestingLevel');
+    const maxLinksPerPage = url.searchParams.get('maxLinksPerPage');
   
     if (!seedUrlQuery) {
       socket.send('Seed URL is not specified');
@@ -30,7 +33,11 @@ export class WsRequestHandler {
     }
 
     const worker = new Worker('./src/crawler/index.js', {
-      workerData: { seedUrl: seedUrl.href },
+      workerData: {
+        seedUrlHref: seedUrl.href,
+        maxNestingLevel,
+        maxLinksPerPage,
+      },
     });
 
     worker.on('message', (message) => {

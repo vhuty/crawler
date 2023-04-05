@@ -22,6 +22,9 @@ export class Crawler extends EventEmitter {
 
   /**
    * @param {URL[]} seedUrls
+   * @param {object} [options]
+   * @param {number} [options.maxNestingLevel]
+   * @param {number} [options.maxLinksPerPage]
    */
   async crawl(seedUrls, options = {}) {
     if (!seedUrls.length) {

@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const $buttonCrawl = document.getElementById('button-crawl');
   const $inputUrl = document.getElementById('input-url');
+  const $inputMaxNestingLevel = document.getElementById('input-max-nesting-level');
+  const $inputMaxLinksPerPage = document.getElementById('input-max-links-per-page');
+
   const $progressCrawler = document.getElementById('progress-crawler');
   const $progressBarCrawler = document.getElementById('progress-bar-crawler');
   const $spanNestingLevel = document.getElementById('span-nesting-level');
@@ -49,6 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = new URL('/crawler', window.location.href);
     url.protocol = 'ws';
     url.searchParams.append('seedUrl', $inputUrl.value);
+    url.searchParams.append('maxNestingLevel', $inputMaxNestingLevel.value);
+    url.searchParams.append('maxLinksPerPage', $inputMaxLinksPerPage.value);
 
     ws = new WebSocket(url);
     ws.onmessage = (message) => {

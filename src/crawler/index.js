@@ -11,8 +11,9 @@ import { CrawlerStorage } from './storage.js';
   const parser = new Parser();
   const crawler = new Crawler(downloader, parser);
 
-  const seedUrl = new URL(workerData.seedUrl);
+  const { seedUrlHref, maxNestingLevel, maxLinksPerPage } = workerData;
 
+  const seedUrl = new URL(seedUrlHref);
   await storage.createIndex(seedUrl);
 
   crawler.on('progress', (data) => {
@@ -34,7 +35,11 @@ import { CrawlerStorage } from './storage.js';
     }
   });
 
-  const result = await crawler.crawl([seedUrl]);
+  const result = await crawler.crawl([seedUrl], {
+    maxNestingLevel,
+    maxLinksPerPage,
+  });
+
   await storage.saveResult(seedUrl, result);
   parentPort?.postMessage({ result });
 })();
