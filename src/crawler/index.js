@@ -11,7 +11,8 @@ import { CrawlerStorage } from './storage.js';
   const storage = new CrawlerStorage();
   const crawler = new Crawler(downloader, parser);
 
-  const seedUrls = [new URL(workerData.seedUrl)];
+  const seedUrl = new URL(workerData.seedUrl);
+  const seedUrls = [seedUrl];
 
   crawler.on('progress', (data) => {
     parentPort?.postMessage({ data });
@@ -33,7 +34,7 @@ import { CrawlerStorage } from './storage.js';
     }
   });
 
-  await storage.createIndex();
+  await storage.createIndex(seedUrl);
 
   const result = await crawler.crawl(seedUrls);
   await storage.saveResult(result);

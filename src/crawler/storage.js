@@ -1,14 +1,14 @@
 import { join } from 'node:path';
-import { writeFile, mkdtemp } from 'node:fs/promises';
+import { writeFile, mkdir } from 'node:fs/promises';
 
 export class CrawlerStorage {
   constructor() {
     this.root = process.cwd();
-    this.dirPrefix = `${Date.now()}-`;
   }
 
-  async createIndex() {
-    this.dirPath = await mkdtemp(join(this.root, 'index', this.dirPrefix));
+  async createIndex(url) {
+    const dirname = `${url.host}-${Date.now()}`;
+    this.dirPath = await mkdir(join(this.root, 'index', dirname));
     console.log('Created index at:', this.dirPath);
   }
 
