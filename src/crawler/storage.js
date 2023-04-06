@@ -22,8 +22,7 @@ export class CrawlerStorage {
     const filename = `${this.getSlugFromUrl(seedUrl)}.html`;
     const filePath = join(this.dirPath, filename);
 
-    await writeFile(filePath, content, 'utf-8');
-    console.log('Saved page:', seedUrl.href);
+    return writeFile(filePath, content, 'utf-8');
   }
 
   async saveResult(seedUrl, result) {

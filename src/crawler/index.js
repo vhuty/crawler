@@ -35,6 +35,7 @@ import { CrawlerStorage } from './storage.js';
     }
   });
 
+  console.log('Processing URL:', seedUrl.href);
   const result = await crawler.crawl([seedUrl], {
     maxNestingLevel,
     maxLinksPerPage,
