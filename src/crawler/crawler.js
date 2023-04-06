@@ -65,7 +65,6 @@ export class Crawler extends EventEmitter {
     };
 
     if (this.nestingLevel >= maxNestingLevel) {
-      console.log('Nesting level:', this.nestingLevel);
       console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
 
       return {
