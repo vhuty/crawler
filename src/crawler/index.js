@@ -42,4 +42,5 @@ import { CrawlerStorage } from './storage.js';
 
   await storage.saveResult(seedUrl, result);
   parentPort?.postMessage({ result });
+  parentPort?.close();
 })();

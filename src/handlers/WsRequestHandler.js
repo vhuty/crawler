@@ -35,8 +35,8 @@ export class WsRequestHandler {
     const worker = new Worker('./src/crawler/index.js', {
       workerData: {
         seedUrlHref: seedUrl.href,
-        maxNestingLevel,
-        maxLinksPerPage,
+        maxNestingLevel: Number(maxNestingLevel),
+        maxLinksPerPage: Number(maxLinksPerPage),
       },
     });
 

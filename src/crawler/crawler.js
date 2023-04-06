@@ -27,29 +27,7 @@ export class Crawler extends EventEmitter {
    * @param {number} [options.maxLinksPerPage]
    */
   async crawl(seedUrls, options = {}) {
-    if (!seedUrls.length) {
-      console.info('All available URLs processed, terminating...');
-
-      return {
-        finishReason: CRAWL_FINISH_REASON.ALL_AVAIL_PROCESSED,
-        nestingLevel: this.getNestingLevel(),
-        totalProcessed: this.getTotalProcessed(),
-        metrics: this.downloader.getMetrics(),
-      };
-    };
-
     const { maxNestingLevel = 3, maxLinksPerPage = 20 } = options;
-
-    if (this.nestingLevel > maxNestingLevel) {
-      console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
-
-      return {
-        finishReason: CRAWL_FINISH_REASON.MAX_LEVEL_REACHED,
-        nestingLevel: this.getNestingLevel(),
-        totalProcessed: this.getTotalProcessed(),
-        metrics: this.downloader.getMetrics(),
-      };
-    }
 
     const childUrls = [];
     let levelProcessed = 0;
@@ -74,9 +52,32 @@ export class Crawler extends EventEmitter {
     }
 
     console.log(`Processed at level ${this.nestingLevel}:`, seedUrls.length);
-    this.nestingLevel += 1;
 
-    return this.crawl(childUrls);
+    if (!childUrls.length) {
+      console.info('All available URLs processed, terminating...');
+
+      return {
+        finishReason: CRAWL_FINISH_REASON.ALL_AVAIL_PROCESSED,
+        nestingLevel: this.getNestingLevel(),
+        totalProcessed: this.getTotalProcessed(),
+        metrics: this.downloader.getMetrics(),
+      };
+    };
+
+    if (this.nestingLevel >= maxNestingLevel) {
+      console.log('Nesting level:', this.nestingLevel);
+      console.info(`Max nesting level (${maxNestingLevel}) reached, terminating...`);
+
+      return {
+        finishReason: CRAWL_FINISH_REASON.MAX_LEVEL_REACHED,
+        nestingLevel: this.getNestingLevel(),
+        totalProcessed: this.getTotalProcessed(),
+        metrics: this.downloader.getMetrics(),
+      };
+    }
+
+    this.nestingLevel += 1;
+    return this.crawl(childUrls, options);
   }
 
   getTotalProcessed() {
