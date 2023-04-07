@@ -80,6 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $inputUrl.removeAttribute('disabled');
 
       stopProgressBar(event.wasClean);
+      setTimeout(() => window.open('/index/', '_blank'), 500);
     };
   });
 
