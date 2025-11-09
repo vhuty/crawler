@@ -1,5 +1,5 @@
 # crawler
-Web crawler for parsing and indexing websites
+Web crawler for parsing and indexing webpages
 
 ![image](https://user-images.githubusercontent.com/40216842/230589829-45b84422-d982-4efd-ba6e-29d0eedc250f.png)
 
